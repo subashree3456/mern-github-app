@@ -9,10 +9,6 @@ import SortRepos from "../components/SortRepos";
 
 import Spinner from "../components/Spinner";
 
-
-
-
-
 const HomePage = () => {
 	const [userProfile, setUserProfile] = useState(null);
 	const [repos, setRepos] = useState([]);
@@ -26,23 +22,17 @@ const HomePage = () => {
 		setLoading(true);
 		try {
 
-			//https://api.github.com/users/subashree3456
+			const res = await fetch(`http://localhost:5000/api/users/profile/${username}`)	
+			const { repos, userProfile } = await res.json();
 
-			const userRes = await fetch(`https://api.github.com/users/${username}`, {
+			// console.log(userProfile , "userProfile");
 
-				headers: {
-					authorization:`token ${import.meta.env.VITE_GITHUB_API_KEY}`,
-                   },
-			});
-			const userProfile = await userRes.json();
-			setUserProfile(userProfile);
-
-			const repoRes = await fetch(userProfile.repos_url);
-			const repos = await repoRes.json();
 			repos.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); //descending, recent first
 			setRepos(repos);
-			console.log("userProfile", userProfile);
-			console.log("repos", repos);
+			setUserProfile(userProfile);
+
+			// console.log("userProfile", userProfile);
+			// console.log("repos", repos);
 
 			return { userProfile, repos };
 
